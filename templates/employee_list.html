@@ -6,6 +6,29 @@
 
     <h2 class="mb-4">Employee List</h2>
 
+    <form method="GET" class="mb-4">
+        <div class="search-box">
+
+            <input
+                type="text"
+                name="search"
+                class="search-input"
+                placeholder="Search employees..."
+                value="{{ request.GET.search }}">
+
+            {% if request.GET.search %}
+                <a href="{% url 'employee_list' %}" class="search-icon">
+                    <i class="bi bi-x-circle-fill"></i>
+                </a>
+            {% else %}
+                <button type="submit" class="search-icon">
+                    <i class="bi bi-search"></i>
+                </button>
+            {% endif %}
+
+        </div>
+    </form>
+
     <table class="table table-bordered table-hover shadow">
 
         <thead class="table-dark">
@@ -24,6 +47,7 @@
         </thead>
 
         <tbody>
+
             {% for employee in employees %}
 
             <tr>
@@ -34,22 +58,31 @@
                 <td>{{ employee.department }}</td>
                 <td>{{ employee.salary }}</td>
                 <td>{{ employee.joining_date }}</td>
+
                 <td>
                     <a href="{% url 'edit_employee' employee.id %}"
-                        class="btn btn-warning btn-sm">
-                            Edit
+                    class="btn btn-warning btn-sm">
+                        Edit
                     </a>
 
                     <a href="{% url 'delete_employee' employee.id %}"
-                        class="btn btn-danger btn-sm">
-                            Delete
+                    class="btn btn-danger btn-sm">
+                        Delete
                     </a>
                 </td>
             </tr>
 
-            {% endfor %}
-        </tbody>
+            {% empty %}
 
+            <tr>
+                <td colspan="8" class="text-center text-danger">
+                    No employees found.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
     </table>
 
 </div>

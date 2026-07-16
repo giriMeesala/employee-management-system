@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row">
+
+    <div class="col-md-4 mb-3">
+        <div class="card text-center shadow">
+            <div class="card-body">
+                <h5>Total Employees</h5>
+                <h2>{{ total_employees }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card text-center shadow">
+            <div class="card-body">
+                <h5>Departments</h5>
+                <h2>{{ total_departments }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card text-center shadow">
+            <div class="card-body">
+                <h5>Average Salary</h5>
+                <h2>₹{{ average_salary|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<h4 class="mt-5">Recent Employees</h4>
+
+<table class="table table-striped">
+
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Department</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for employee in recent_employees %}
+
+        <tr>
+            <td>{{ employee.name }}</td>
+            <td>{{ employee.department }}</td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}
