@@ -5,7 +5,8 @@ from django.db.models import Q
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Avg
+from django.db.models import Avg, Count
+from django.contrib.auth import logout
 #redirect() -> to send the user to another page after any operation done(you are in home page when you click add_employee it redirect to next page), this improves user experience
 #(get_object_or_404) -> lets assume, we have only 5 employees when we try to update an employee at id = 6, it returns ("error 404 page not found")
 
@@ -89,6 +90,9 @@ def delete_employee(request, id):
 
 def login_user(request):
 
+    if request.user.is_authenticated:
+        return redirect("home")
+
     if request.method == "POST":
 
         username = request.POST.get("username")
@@ -129,11 +133,28 @@ def dashboard(request):
         "-id"
     )[:5]
 
+    department_data = Employee.objects.values(
+        "department"
+    ).annotate(
+        total=Count("id")
+    )
+
     context = {
         "total_employees": total_employees,
         "total_departments": total_departments,
         "average_salary": average_salary,
         "recent_employees": recent_employees,
+        "department_data": department_data,
     }
 
     return render(request, "dashboard.html", context)
+
+
+@login_required
+def logout_user(request):
+
+    logout(request)
+
+    messages.success(request, "You have been logged out successfully.")
+
+    return redirect("login")
