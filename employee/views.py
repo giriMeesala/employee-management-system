@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Count
 from django.contrib.auth import logout
+from django.core.paginator import Paginator
 #redirect() -> to send the user to another page after any operation done(you are in home page when you click add_employee it redirect to next page), this improves user experience
 #(get_object_or_404) -> lets assume, we have only 5 employees when we try to update an employee at id = 6, it returns ("error 404 page not found")
 
@@ -30,8 +31,14 @@ def employee_list(request):
     else:
         employees = Employee.objects.all()
 
+    paginator = Paginator(employees, 10)
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "employee_list.html", {
-        "employees": employees
+        "page_obj": page_obj
     })
 
 
