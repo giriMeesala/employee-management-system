@@ -31,14 +31,18 @@ def employee_list(request):
     else:
         employees = Employee.objects.all()
 
+    # Total employees (or search results)
+    total_employees = employees.count()
+
+    # Pagination
     paginator = Paginator(employees, 10)
-
     page_number = request.GET.get("page")
-
     page_obj = paginator.get_page(page_number)
 
     return render(request, "employee_list.html", {
-        "page_obj": page_obj
+        "page_obj": page_obj,
+        "total_employees": total_employees,
+        "search": search,
     })
 
 
