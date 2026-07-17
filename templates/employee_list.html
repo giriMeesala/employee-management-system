@@ -128,23 +128,29 @@
                 <td>₹{{ employee.salary|floatformat:0 }}</td>
                 <td>{{ employee.joining_date }}</td>
                 <td>
+                    <a href="{% url 'employee_details' employee.id %}"
+                        class="btn btn-info btn-sm"
+                        title="View">
+
+                        <i class="bi bi-eye"></i>
+
+                    </a>
 
                     <a href="{% url 'edit_employee' employee.id %}"
-                    class="btn btn-warning btn-sm"
-                    title="Edit">
+                        class="btn btn-warning btn-sm"
+                        title="Edit">
 
                         <i class="bi bi-pencil-square"></i>
 
                     </a>
 
                     <a href="{% url 'delete_employee' employee.id %}"
-                    class="btn btn-danger btn-sm"
-                    title="Delete">
+                        class="btn btn-danger btn-sm"
+                        title="Delete">
 
                         <i class="bi bi-trash"></i>
 
                     </a>
-
                 </td>
             </tr>
 

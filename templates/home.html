@@ -2,37 +2,49 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container py-5">
+<div class="container mt-4">
 
-    <div class="text-center mb-5">
+    <div class="p-5 mb-4 bg-light rounded-3 shadow-sm">
 
-        <h1 class="display-4 fw-bold">
-            Employee Management System
-        </h1>
+        <div class="container-fluid py-3">
 
-        <p class="lead text-secondary">
-            Manage employees efficiently with a modern and secure platform.
-        </p>
+            <h1 class="display-5 fw-bold">
+
+                Welcome Back 👋
+
+            </h1>
+
+            <p class="fs-5 text-muted">
+
+                Manage employees, monitor statistics, and keep your organization organized from one place.
+
+            </p>
+
+        </div>
 
     </div>
 
-    <div class="row">
+    <div class="row mt-4">
 
-        <div class="col-md-6">
+        <div class="col-md-4 mb-3">
 
-            <div class="card shadow-lg border-0">
+            <div class="card shadow border-0 bg-primary text-white">
 
-                <div class="card-body text-center">
+                <div class="card-body">
 
-                    <h3>👥 Employees</h3>
+                    <div class="d-flex justify-content-between align-items-center">
 
-                    <p>
-                        Add, update and manage employee records.
-                    </p>
+                        <div>
 
-                    <button class="btn btn-primary">
-                        Manage Employees
-                    </button>
+                            <h6>Total Employees</h6>
+
+                            <h2>{{ total_employees }}</h2>
+
+                        </div>
+
+                        <i class="bi bi-people-fill fs-1"></i>
+
+                    </div>
 
                 </div>
 
@@ -40,25 +52,129 @@
 
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4 mb-3">
 
-            <div class="card shadow-lg border-0">
+            <div class="card shadow border-0 bg-success text-white">
 
-                <div class="card-body text-center">
+                <div class="card-body">
 
-                    <h3>📊 Dashboard</h3>
+                    <div class="d-flex justify-content-between align-items-center">
 
-                    <p>
-                        View reports and employee statistics.
-                    </p>
+                        <div>
 
-                    <button class="btn btn-success">
-                        Open Dashboard
-                    </button>
+                            <h6>Departments</h6>
+
+                            <h2>{{ total_departments }}</h2>
+
+                        </div>
+
+                        <i class="bi bi-building fs-1"></i>
+
+                    </div>
 
                 </div>
 
             </div>
+
+        </div>
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow border-0 bg-warning text-dark">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6>Average Salary</h6>
+
+                            <h2>₹{{ average_salary|floatformat:0 }}</h2>
+
+                        </div>
+
+                        <i class="bi bi-currency-rupee fs-1"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    
+    <div class="card shadow mt-5">
+
+        <div class="card-header bg-dark text-white">
+
+            <h4 class="mb-0">
+
+                <i class="bi bi-clock-history"></i>
+
+                Recent Employees
+
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Joining Date</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for employee in recent_employees %}
+
+                    <tr>
+
+                        <td>{{ employee.name }}</td>
+
+                        <td>
+
+                            <span class="badge bg-info">
+
+                                {{ employee.department }}
+
+                            </span>
+
+                        </td>
+
+                        <td>{{ employee.joining_date }}</td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="3" class="text-center">
+
+                            No employees available.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
 
         </div>
 

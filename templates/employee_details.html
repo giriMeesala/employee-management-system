@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-lg border-0">
+
+        <div class="card-header bg-primary text-white">
+
+            <h3 class="mb-0">
+
+                <i class="bi bi-person-circle"></i>
+
+                Employee Profile
+
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <!-- Profile Icon -->
+
+                <div class="col-md-3 text-center">
+
+                    <div class="card border-0 shadow-sm p-3">
+
+                        <i class="bi bi-person-circle text-primary"
+                            style="font-size:140px;"></i>
+
+                        <h4 class="mt-3">
+                            {{ employee.name }}
+                        </h4>
+
+                        <span class="badge bg-success">
+                            {{ employee.department }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <!-- Employee Details -->
+
+                <div class="col-md-9">
+
+                    <table class="table table-borderless">
+
+                        <tr>
+                            <th width="30%">Name</th>
+                            <td>{{ employee.name }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Email</th>
+                            <td>{{ employee.email }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Phone</th>
+                            <td>{{ employee.phone }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Department</th>
+                            <td>
+                                <span class="badge bg-info">
+                                    {{ employee.department }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Salary</th>
+
+                            <td>
+                                <span class="badge bg-warning text-dark fs-6">
+                                    ₹{{ employee.salary|floatformat:0 }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Joining Date</th>
+                            <td>{{ employee.joining_date }}</td>
+                        </tr>
+
+                    </table>
+
+                    <div class="mt-4">
+
+                        <a href="{% url 'employee_list' %}"
+                        class="btn btn-secondary">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            Back
+
+                        </a>
+
+                        <a href="{% url 'edit_employee' employee.id %}"
+                        class="btn btn-warning">
+
+                            <i class="bi bi-pencil-square"></i>
+
+                            Edit
+
+                        </a>
+
+                        <a href="{% url 'delete_employee' employee.id %}"
+                        class="btn btn-danger">
+
+                            <i class="bi bi-trash"></i>
+
+                            Delete
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -14,7 +14,35 @@ from django.core.paginator import Paginator
 # Create your views here.
 @login_required
 def home(request):
-    return render(request, "home.html")
+
+    total_employees = Employee.objects.count()
+
+    total_departments = Employee.objects.values(
+        "department"
+    ).distinct().count()
+
+    average_salary = Employee.objects.aggregate(
+        Avg("salary")
+    )["salary__avg"]
+
+    recent_employees = Employee.objects.order_by(
+        "-id"
+    )[:5]
+
+    context = {
+
+        "total_employees": total_employees,
+
+        "total_departments": total_departments,
+
+        "average_salary": average_salary,
+
+        "recent_employees": recent_employees,
+
+    }
+
+    return render(request, "home.html", context)
+
 
 
 @login_required
@@ -46,6 +74,7 @@ def employee_list(request):
     })
 
 
+
 @login_required
 def add_employee(request):
     if request.method == "POST":
@@ -61,6 +90,7 @@ def add_employee(request):
     return render(request, "add_employee.html", {
         "form": form
     })
+
 
 
 @login_required
@@ -84,6 +114,7 @@ def edit_employee(request, id):
     })
 
 
+
 @login_required
 def delete_employee(request, id):
 
@@ -94,6 +125,17 @@ def delete_employee(request, id):
         return redirect("employee_list")
 
     return render(request, "delete_employee.html", {
+        "employee": employee
+    })
+
+
+
+@login_required
+def employee_details(request, id):
+
+    employee = get_object_or_404(Employee, id=id)
+
+    return render(request, "employee_details.html", {
         "employee": employee
     })
 
