@@ -2,6 +2,7 @@ from .models import Employee
 from .forms import EmployeeForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -78,7 +79,7 @@ def employee_list(request):
 @login_required
 def add_employee(request):
     if request.method == "POST":
-        form = EmployeeForm(request.POST)
+        form = EmployeeForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
@@ -100,7 +101,7 @@ def edit_employee(request, id):
 
     if request.method == "POST":
 
-        form = EmployeeForm(request.POST, instance=employee)       #(instance=employee) -> Update Existing employee. without this it creates new employee
+        form = EmployeeForm(request.POST, request.FILES, instance=employee)       #(instance=employee) -> Update Existing employee. without this it creates new employee
 
         if form.is_valid():
             form.save()
@@ -148,8 +149,20 @@ def login_user(request):
 
     if request.method == "POST":
 
-        username = request.POST.get("username")
+        username_or_email = request.POST.get("username")
         password = request.POST.get("password")
+
+        # Check if the user entered an email
+        if "@" in username_or_email:
+
+            try:
+                user_obj = User.objects.get(email=username_or_email)
+                username = user_obj.username
+            except User.DoesNotExist:
+                username = username_or_email
+
+        else:
+            username = username_or_email
 
         user = authenticate(
             request,
@@ -164,9 +177,10 @@ def login_user(request):
 
         else:
 
-            messages.error(request, "Invalid username or password.")
+            messages.error(request, "Invalid username/email or password.")
 
     return render(request, "login.html")
+
 
 
 @login_required
