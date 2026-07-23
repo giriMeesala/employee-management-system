@@ -1,5 +1,9 @@
 from .models import Employee
 from .forms import EmployeeForm
+import base64
+import cv2
+import numpy as np
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.models import User
@@ -11,6 +15,7 @@ from django.contrib.auth import logout
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from employee.face.detector import detect_faces
 #redirect() -> to send the user to another page after any operation done(you are in home page when you click add_employee it redirect to next page), this improves user experience
 #(get_object_or_404) -> lets assume, we have only 5 employees when we try to update an employee at id = 6, it returns ("error 404 page not found")
 
@@ -241,11 +246,48 @@ def register_face(request):
 def receive_frame(request):
 
     if request.method == "POST":
+
+        data = json.loads(request.body)
+
+        image = data["image"]
+
+        image = image.split(",")[1]
+
+        image_bytes = base64.b64decode(image)
+
+        np_array = np.frombuffer(
+            image_bytes,
+            np.uint8
+        )
+
+        frame = cv2.imdecode(
+            np_array,
+            cv2.IMREAD_COLOR
+        )
+
+        print("Before face detection")
+
+        faces = detect_faces(frame)
+
+        print("After face detection")
+
+        print("Faces detected:", len(faces))
+
+        cv2.imwrite(
+            "media/last_frame.jpg",
+            frame
+        )
+
         return JsonResponse({
+
             "status": "success",
-            "message": "Frame received."
+
+            "message": f"Faces detected: {len(faces)}"
+
         })
 
     return JsonResponse({
+
         "status": "error"
+
     })
