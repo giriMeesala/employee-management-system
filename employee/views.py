@@ -4,6 +4,8 @@ import base64
 import cv2
 import numpy as np
 import json
+from employee.face.recognizer import get_face_embedding
+from .models import UserFace
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.models import User
@@ -16,6 +18,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from employee.face.detector import detect_faces
+from employee.face.matcher import is_same_person
 #redirect() -> to send the user to another page after any operation done(you are in home page when you click add_employee it redirect to next page), this improves user experience
 #(get_object_or_404) -> lets assume, we have only 5 employees when we try to update an employee at id = 6, it returns ("error 404 page not found")
 
@@ -265,13 +268,30 @@ def receive_frame(request):
             cv2.IMREAD_COLOR
         )
 
-        print("Before face detection")
+        # Generate face embedding
+        embedding = get_face_embedding(frame)
 
-        faces = detect_faces(frame)
+        if embedding is None:
 
-        print("After face detection")
+            return JsonResponse({
 
-        print("Faces detected:", len(faces))
+                "status": "error",
+
+                "message": "No face detected."
+
+            })
+
+        # Get or create UserFace record
+        face, created = UserFace.objects.get_or_create(
+            user=request.user
+        )
+
+        # Save embedding
+        face.embedding = embedding.tolist()
+
+        face.face_registered = True
+
+        face.save()
 
         cv2.imwrite(
             "media/last_frame.jpg",
@@ -282,12 +302,98 @@ def receive_frame(request):
 
             "status": "success",
 
-            "message": f"Faces detected: {len(faces)}"
+            "message": "Face registered successfully."
 
         })
 
     return JsonResponse({
 
         "status": "error"
+
+    })
+
+
+
+@login_required
+def face_login(request):
+
+    return render(
+        request,
+        "face/face_login.html"
+    )
+
+
+
+@csrf_exempt
+def face_login_api(request):
+
+    if request.method != "POST":
+
+        return JsonResponse({
+            "status": "error"
+        })
+
+    data = json.loads(request.body)
+
+    image = data["image"].split(",")[1]
+
+    image_bytes = base64.b64decode(image)
+
+    np_array = np.frombuffer(
+        image_bytes,
+        np.uint8
+    )
+
+    frame = cv2.imdecode(
+        np_array,
+        cv2.IMREAD_COLOR
+    )
+
+    live_embedding = get_face_embedding(frame)
+
+    if live_embedding is None:
+
+        return JsonResponse({
+
+            "status": "error",
+
+            "message": "No face detected."
+
+        })
+
+    user_faces = UserFace.objects.filter(
+        face_registered=True
+    )
+
+    for user_face in user_faces:
+
+        if user_face.embedding is None:
+            continue
+
+        matched = is_same_person(
+            live_embedding.tolist(),
+            user_face.embedding
+        )
+
+        if matched:
+
+            login(
+                request,
+                user_face.user
+            )
+
+            return JsonResponse({
+
+                "status": "success",
+
+                "message": f"Welcome {user_face.user.username}"
+
+            })
+
+    return JsonResponse({
+
+        "status": "error",
+
+        "message": "Face not recognized."
 
     })

@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Employee(models.Model):
@@ -19,9 +21,8 @@ class Employee(models.Model):
   
 
 
-from django.contrib.auth.models import User
-
 class UserFace(models.Model):
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE
@@ -31,7 +32,7 @@ class UserFace(models.Model):
         default=False
     )
 
-    face_encoding = models.BinaryField(
+    embedding = models.JSONField(
         null=True,
         blank=True
     )

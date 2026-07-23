@@ -19,4 +19,16 @@ urlpatterns = [
     views.receive_frame,
     name="receive_frame"
 ),
+
+    path(
+    "face-login/",
+    views.face_login,
+    name="face_login"
+),
+
+    path(
+    "face-login-api/",
+    views.face_login_api,
+    name="face_login_api"
+),
 ]
