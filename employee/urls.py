@@ -12,4 +12,11 @@ urlpatterns = [
     path("delete/<int:id>/", views.delete_employee, name="delete_employee"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("logout/", views.logout_user, name="logout"),
+    path(
+    "register-face/", views.register_face, name="register_face"),
+    path(
+    "receive-frame/",
+    views.receive_frame,
+    name="receive_frame"
+),
 ]

@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Count
 from django.contrib.auth import logout
 from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 #redirect() -> to send the user to another page after any operation done(you are in home page when you click add_employee it redirect to next page), this improves user experience
 #(get_object_or_404) -> lets assume, we have only 5 employees when we try to update an employee at id = 6, it returns ("error 404 page not found")
 
@@ -225,3 +227,25 @@ def logout_user(request):
     messages.success(request, "You have been logged out successfully.")
 
     return redirect("login")
+
+
+
+@login_required
+def register_face(request):
+    return render(request, "face/register_face.html")
+
+
+
+@csrf_exempt
+@login_required
+def receive_frame(request):
+
+    if request.method == "POST":
+        return JsonResponse({
+            "status": "success",
+            "message": "Frame received."
+        })
+
+    return JsonResponse({
+        "status": "error"
+    })

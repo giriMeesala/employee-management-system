@@ -16,3 +16,33 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.name
+  
+
+
+from django.contrib.auth.models import User
+
+class UserFace(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    face_registered = models.BooleanField(
+        default=False
+    )
+
+    face_encoding = models.BinaryField(
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return self.user.username
